@@ -1,0 +1,28 @@
+<div class="confirm-container">
+
+  <div class="confirm-icon">
+    <mat-icon>help</mat-icon>
+  </div>
+
+  <h2>{{ data.title }}</h2>
+
+  <p>{{ data.message }}</p>
+
+  <div class="actions">
+    <button
+      mat-stroked-button
+      (click)="cancelar()"
+    >
+      {{ data.cancelText ?? 'Cancelar' }}
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="confirmar()"
+    >
+      {{ data.confirmText ?? 'Confirmar' }}
+    </button>
+  </div>
+
+</div>

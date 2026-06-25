@@ -1,1 +1,101 @@
 /* You can add global styles to this file, and also import other style files */
+@use "tailwindcss";
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+/* ========= Material ========= */
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-text-field-wrapper {
+  min-height: 52px;
+  border-radius: 14px !important;
+}
+
+.mat-mdc-form-field-infix {
+  min-height: auto !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  min-height: 20px;
+}
+
+.mat-mdc-input-element {
+  font-size: 14px !important;
+}
+
+textarea.mat-mdc-input-element {
+  resize: vertical;
+  min-height: 90px;
+}
+
+/* ========= Layout ========= */
+
+.form-container {
+  @apply max-w-4xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-sm p-6;
+}
+
+.card-surface {
+  @apply bg-white rounded-3xl border border-slate-200 shadow-sm;
+}
+
+.page-title {
+  @apply flex items-center gap-4 mb-8;
+}
+
+/* ========= Formularios HTML normales ========= */
+
+.form-label {
+  @apply block mb-1.5 text-sm font-medium text-slate-700;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm transition-all outline-none;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  @apply border-indigo-500 ring-4 ring-indigo-100;
+}
+
+.form-error {
+  @apply mt-1 text-xs text-red-500;
+}
+
+/* Labels de Angular Material */
+.mat-mdc-form-field {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.mat-mdc-floating-label,
+.mdc-floating-label {
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Inputs */
+.mat-mdc-input-element {
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Selects */
+.mat-mdc-select-value,
+.mat-mdc-select-placeholder,
+.mat-mdc-select-min-line {
+  font-family: 'Inter', sans-serif !important;
+}

@@ -1,0 +1,214 @@
+<div class="page-container">
+  @if (cargando()) {
+    <div class="spinner-container">
+      <mat-spinner diameter="56"></mat-spinner>
+    </div>
+  } @else if (!evento()) {
+    <div class="empty-state">
+      <mat-icon>event_busy</mat-icon>
+      <p>No se encontró el evento.</p>
+      <a mat-stroked-button routerLink="/eventos">Volver al listado</a>
+    </div>
+  } @else {
+    <div class="space-y-8">
+      <!-- Header -->
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div class="flex items-start gap-4">
+          <a
+            routerLink="/eventos"
+            class="flex items-center justify-center w-12 h-12 rounded-xl bg-white border border-slate-200 shadow-sm hover:bg-slate-100 transition"
+          >
+            <mat-icon>arrow_back</mat-icon>
+          </a>
+
+          <div>
+            <div class="flex items-center gap-3 flex-wrap">
+              <h1 class="text-4xl font-bold text-slate-900">
+                {{ evento()!.titulo }}
+              </h1>
+
+              <span
+                class="px-3 py-1 rounded-full text-sm font-medium"
+                [ngClass]="{
+                  'bg-green-100 text-green-700': evento()!.estado === 'Activo',
+                  'bg-red-100 text-red-700': evento()!.estado === 'Cancelado',
+                  'bg-slate-100 text-slate-700': evento()!.estado === 'Completado',
+                }"
+              >
+                {{ estadoLabel(evento()!.estado) }}
+              </span>
+            </div>
+
+            <p class="text-slate-500 mt-2">Información completa del evento</p>
+          </div>
+        </div>
+
+        @if (eventoActivo(evento()!.estado)) {
+          <a
+            [routerLink]="['/eventos', evento()!.id, 'reservar']"
+            class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl shadow-lg transition"
+          >
+            <mat-icon>confirmation_number</mat-icon>
+            Reservar Entrada
+          </a>
+        }
+      </div>
+
+      <!-- Grid principal -->
+      <div class="grid lg:grid-cols-3 gap-6">
+        <!-- Información -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-8">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
+                <mat-icon class="!text-indigo-600"> info </mat-icon>
+              </div>
+
+              <div>
+                <h2 class="text-xl font-semibold">Información del Evento</h2>
+
+                <p class="text-slate-500 text-sm">Detalles generales</p>
+              </div>
+            </div>
+
+            <p class="text-slate-600 leading-relaxed mb-8">
+              {{ evento()!.descripcion }}
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="flex gap-3 p-4 rounded-2xl bg-slate-50">
+                <mat-icon>category</mat-icon>
+
+                <div>
+                  <p class="text-sm text-slate-500">Tipo</p>
+
+                  <p class="font-semibold">
+                    {{ evento()!.tipo }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex gap-3 p-4 rounded-2xl bg-slate-50">
+                <mat-icon>place</mat-icon>
+
+                <div>
+                  <p class="text-sm text-slate-500">Venue</p>
+
+                  <p class="font-semibold">
+                    {{ evento()!.venueNombre }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex gap-3 p-4 rounded-2xl bg-slate-50">
+                <mat-icon>event</mat-icon>
+
+                <div>
+                  <p class="text-sm text-slate-500">Inicio</p>
+
+                  <p class="font-semibold">
+                    {{ evento()!.fechaHoraInicio | date: 'dd/MM/yyyy HH:mm' }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex gap-3 p-4 rounded-2xl bg-slate-50">
+                <mat-icon>event_available</mat-icon>
+
+                <div>
+                  <p class="text-sm text-slate-500">Fin</p>
+
+                  <p class="font-semibold">
+                    {{ evento()!.fechaHoraFin | date: 'dd/MM/yyyy HH:mm' }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex gap-3 p-4 rounded-2xl bg-slate-50">
+                <mat-icon>attach_money</mat-icon>
+
+                <div>
+                  <p class="text-sm text-slate-500">Precio</p>
+
+                  <p class="font-bold text-indigo-600 text-lg">
+                    {{ evento()!.precioEntrada | currency: 'COP' : 'symbol' : '1.0-0' }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex gap-3 p-4 rounded-2xl bg-slate-50">
+                <mat-icon>people</mat-icon>
+
+                <div>
+                  <p class="text-sm text-slate-500">Capacidad</p>
+
+                  <p class="font-semibold">
+                    {{ evento()!.capacidadMaxima }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reporte -->
+        <div>
+          @if (reporte()) {
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
+                  <mat-icon class="!text-emerald-600"> bar_chart </mat-icon>
+                </div>
+
+                <div>
+                  <h2 class="font-semibold">Ocupación</h2>
+
+                  <p class="text-sm text-slate-500">Estado actual</p>
+                </div>
+              </div>
+
+              <div class="mb-6">
+                <div class="flex justify-between mb-2">
+                  <span class="text-slate-500"> Ocupación </span>
+
+                  <span class="font-bold">
+                    {{ reporte()!.porcentajeOcupacion | number: '1.0-1' }}%
+                  </span>
+                </div>
+
+                <mat-progress-bar mode="determinate" [value]="reporte()!.porcentajeOcupacion">
+                </mat-progress-bar>
+              </div>
+
+              <div class="grid gap-4">
+                <div class="p-4 rounded-2xl bg-blue-50">
+                  <p class="text-sm text-slate-500">Entradas Vendidas</p>
+
+                  <p class="text-3xl font-bold text-blue-600">
+                    {{ reporte()!.totalEntradasVendidas }}
+                  </p>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-green-50">
+                  <p class="text-sm text-slate-500">Disponibles</p>
+
+                  <p class="text-3xl font-bold text-green-600">
+                    {{ reporte()!.totalEntradasDisponibles }}
+                  </p>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-amber-50">
+                  <p class="text-sm text-slate-500">Ingresos</p>
+
+                  <p class="text-2xl font-bold text-amber-600">
+                    {{ reporte()!.totalIngresos | currency: 'COP' : 'symbol' : '1.0-0' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

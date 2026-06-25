@@ -1,0 +1,206 @@
+<div class="page-container">
+  @if (cargando()) {
+    <div class="flex justify-center py-20">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (!reserva()) {
+    <div
+      class="max-w-xl mx-auto text-center bg-white rounded-3xl border border-slate-200 p-10 shadow-sm"
+    >
+      <mat-icon class="!text-6xl !w-16 !h-16 !text-slate-300"> receipt_long </mat-icon>
+
+      <h2 class="mt-4 text-xl font-semibold text-slate-900">Reserva no encontrada</h2>
+
+      <p class="mt-2 text-slate-500">La reserva solicitada no existe o fue eliminada.</p>
+
+      <a
+        routerLink="/eventos"
+        class="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition"
+      >
+        Volver a eventos
+      </a>
+    </div>
+  } @else {
+    <!-- HEADER -->
+
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center gap-4">
+        <a
+          routerLink="/eventos"
+          class="flex items-center justify-center w-12 h-12 rounded-xl bg-white border border-slate-200 shadow-sm hover:bg-slate-100 transition"
+        >
+          <mat-icon>arrow_back</mat-icon>
+        </a>
+
+        <div>
+          <h1 class="text-3xl font-bold text-slate-900">Reserva #{{ reserva()!.id }}</h1>
+
+          <p class="text-slate-500">Detalle completo de la reserva</p>
+        </div>
+      </div>
+
+      <span
+        class="px-4 py-2 rounded-full text-sm font-semibold"
+        [ngClass]="estadoColor(reserva()!.estado)"
+      >
+        {{ estadoLabel(reserva()!.estado) }}
+      </span>
+    </div>
+
+    <!-- GRID -->
+
+    <div class="grid lg:grid-cols-3 gap-6">
+      <!-- DATOS RESERVA -->
+
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+          <div class="flex items-center gap-3 mb-6">
+            <mat-icon class="!text-indigo-600">person</mat-icon>
+
+            <h2 class="text-xl font-semibold">Datos del Comprador</h2>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex justify-between border-b border-slate-100 pb-3">
+              <span class="text-slate-500">Nombre</span>
+              <span class="font-medium">
+                {{ reserva()!.nombreComprador }}
+              </span>
+            </div>
+
+            <div class="flex justify-between border-b border-slate-100 pb-3">
+              <span class="text-slate-500">Email</span>
+              <span class="font-medium">
+                {{ reserva()!.emailComprador }}
+              </span>
+            </div>
+
+            <div class="flex justify-between border-b border-slate-100 pb-3">
+              <span class="text-slate-500">Entradas</span>
+              <span class="font-medium">
+                {{ reserva()!.cantidad }}
+              </span>
+            </div>
+
+            <div class="flex justify-between border-b border-slate-100 pb-3">
+              <span class="text-slate-500">Fecha creación</span>
+              <span class="font-medium">
+                {{ reserva()!.fechaCreacion | date: 'dd/MM/yyyy HH:mm' }}
+              </span>
+            </div>
+
+            @if (reserva()!.codigoReserva) {
+              <div class="mt-4 rounded-2xl bg-indigo-50 border border-indigo-200 p-4">
+                <div class="text-xs uppercase tracking-wider text-indigo-600">
+                  Código de reserva
+                </div>
+
+                <div class="text-xl font-bold text-indigo-700 tracking-widest">
+                  {{ reserva()!.codigoReserva }}
+                </div>
+              </div>
+            }
+
+            @if (reserva()!.fechaCancelacion) {
+              <div class="rounded-xl bg-red-50 border border-red-200 p-4 text-red-700">
+                Cancelada el
+                {{ reserva()!.fechaCancelacion | date: 'dd/MM/yyyy HH:mm' }}
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- RESUMEN -->
+
+      <div>
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sticky top-6">
+          <div class="flex items-center gap-3 mb-6">
+            <mat-icon class="!text-indigo-600">event</mat-icon>
+
+            <h2 class="text-xl font-semibold">Evento</h2>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm text-slate-500">Título</p>
+
+              <p class="font-semibold text-slate-900">
+                {{ reserva()!.eventoTitulo }}
+              </p>
+            </div>
+
+            <div>
+              <p class="text-sm text-slate-500">Fecha</p>
+
+              <p class="font-medium">
+                {{ evento()!.fechaHoraInicio | date: 'dd/MM/yyyy HH:mm' }}
+              </p>
+            </div>
+
+            <div>
+              <p class="text-sm text-slate-500">Precio unitario</p>
+
+              <p class="font-medium">
+                {{ evento()!.precioEntrada | currency: 'USD' }}
+              </p>
+            </div>
+
+            <div class="mt-6 rounded-2xl bg-emerald-50 border border-emerald-200 p-5 text-center">
+              <p class="text-sm text-emerald-700">Total pagado</p>
+
+              <p class="text-3xl font-bold text-emerald-600">
+                {{ reserva()!.cantidad * evento()!.precioEntrada | currency: 'USD' }}
+              </p>
+            </div>
+
+            <a
+              [routerLink]="['/eventos', reserva()!.eventoId]"
+              class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 transition"
+            >
+              <mat-icon>visibility</mat-icon>
+              Ver Evento
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+
+    <div class="mt-6 bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+      <h2 class="text-xl font-semibold mb-5">Acciones</h2>
+
+      <div class="flex flex-wrap gap-4">
+        @if (reserva()!.estado === 'PendientePago') {
+          <button
+            (click)="confirmarPago()"
+            [disabled]="procesando()"
+            class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition disabled:opacity-50"
+          >
+            <mat-icon>payments</mat-icon>
+            Confirmar Pago
+          </button>
+        }
+
+        @if (reserva()!.estado === 'Confirmada') {
+          <button
+            (click)="cancelarReserva()"
+            [disabled]="procesando()"
+            class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 transition"
+          >
+            <mat-icon>cancel</mat-icon>
+            Cancelar Reserva
+          </button>
+        }
+
+        @if (reserva()!.estado === 'Cancelada') {
+          <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-100 text-slate-600">
+            <mat-icon>info</mat-icon>
+            No hay acciones disponibles.
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

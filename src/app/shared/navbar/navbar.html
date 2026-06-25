@@ -1,0 +1,47 @@
+<nav class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a
+        routerLink="/eventos"
+        class="flex items-center gap-3 text-slate-900 hover:text-indigo-600 transition"
+      >
+        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600 text-white">
+          <mat-icon>event</mat-icon>
+        </div>
+
+        <div>
+          <span class="block text-lg font-bold"> EventosVivos </span>
+          <span class="block text-xs text-slate-500"> Gestión de eventos </span>
+        </div>
+      </a>
+
+      <!-- Menú -->
+      <div class="flex items-center gap-3">
+        <a
+          routerLink="/eventos"
+          routerLinkActive="bg-slate-100 text-indigo-600"
+          class="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition"
+        >
+          <mat-icon>list</mat-icon>
+          Eventos
+        </a>
+        <a
+          routerLink="/reservaciones"
+          routerLinkActive="bg-indigo-100 text-indigo-700"
+          class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition"
+        >
+          Reservaciones
+        </a>
+
+        <a
+          routerLink="/eventos/crear"
+          class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white font-medium shadow-md hover:bg-indigo-700 hover:shadow-lg transition"
+        >
+          <mat-icon>add</mat-icon>
+          Crear Evento
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

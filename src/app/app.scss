@@ -1,0 +1,30 @@
+main.container {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+  min-height: calc(100vh - 100px);
+}
+
+.estado-activo {
+  color: #4caf50;
+}
+
+.estado-cancelado {
+  color: #f44336;
+}
+
+.estado-completado {
+  color: #9e9e9e;
+}
+
+.estado-pendiente {
+  color: #ff9800;
+}
+
+.estado-confirmada {
+  color: #2196f3;
+}
+
+.estado-cancelada {
+  color: #f44336;
+}

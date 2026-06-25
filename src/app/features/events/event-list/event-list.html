@@ -1,0 +1,215 @@
+<div class="page-container">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+    <div>
+      <h1 class="flex items-center gap-3 text-4xl font-bold text-slate-900">
+        <mat-icon class="!text-indigo-600">event</mat-icon>
+        Eventos
+      </h1>
+
+      <p class="text-slate-500 mt-1">Administra y consulta todos los eventos registrados</p>
+    </div>
+
+    <a
+      routerLink="/eventos/crear"
+      class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl shadow-lg transition"
+    >
+      <mat-icon>add</mat-icon>
+      Crear Evento
+    </a>
+  </div>
+
+  <!-- Filtros -->
+  <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 mb-8">
+    <div class="flex items-center gap-2 mb-6">
+      <mat-icon class="!text-indigo-600">filter_list</mat-icon>
+
+      <h2 class="text-lg font-semibold text-slate-900">Filtros</h2>
+    </div>
+
+    <form
+      [formGroup]="filtroForm"
+      (ngSubmit)="cargar()"
+      class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
+    >
+      <!-- título -->
+      <mat-form-field appearance="outline">
+        <mat-label>Buscar por título</mat-label>
+        <input matInput formControlName="titulo" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- tipo -->
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="tipo">
+          <mat-option value="">Todos</mat-option>
+
+          @for (t of tipos; track t.value) {
+            <mat-option [value]="t.value">
+              {{ t.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- estado -->
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+
+        <mat-select formControlName="estado">
+          <mat-option value="">Todos</mat-option>
+
+          @for (e of estados; track e.value) {
+            <mat-option [value]="e.value">
+              {{ e.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- venue -->
+      <mat-form-field appearance="outline">
+        <mat-label>Venue</mat-label>
+
+        <mat-select formControlName="venueId">
+          <mat-option [value]="null">Todos</mat-option>
+
+          @for (v of venues(); track v.id) {
+            <mat-option [value]="v.id">
+              {{ v.nombre }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- fecha inicio -->
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+
+        <input matInput [matDatepicker]="pickerDesde" formControlName="fechaInicio" />
+
+        <mat-datepicker-toggle matSuffix [for]="pickerDesde"> </mat-datepicker-toggle>
+
+        <mat-datepicker #pickerDesde />
+      </mat-form-field>
+
+      <!-- fecha fin -->
+      <mat-form-field appearance="outline">
+        <mat-label>Hasta</mat-label>
+
+        <input matInput [matDatepicker]="pickerHasta" formControlName="fechaFin" />
+
+        <mat-datepicker-toggle matSuffix [for]="pickerHasta"> </mat-datepicker-toggle>
+
+        <mat-datepicker #pickerHasta />
+      </mat-form-field>
+
+      <div class="xl:col-span-3 flex gap-3 mt-2">
+        <button
+          type="submit"
+          class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl shadow-md transition"
+        >
+          <mat-icon>search</mat-icon>
+          Buscar
+        </button>
+
+        <button
+          type="button"
+          (click)="limpiarFiltros()"
+          class="flex items-center gap-2 border border-slate-300 px-5 py-3 rounded-xl hover:bg-slate-100 transition"
+        >
+          <mat-icon>clear</mat-icon>
+          Limpiar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Listado -->
+  @if (cargando()) {
+    <div class="spinner-container">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (eventos().length === 0) {
+    <div class="bg-white rounded-3xl shadow-sm p-12 text-center">
+      <mat-icon class="!text-7xl !w-20 !h-20 text-slate-300"> event_busy </mat-icon>
+
+      <h3 class="text-xl font-semibold mt-4">No se encontraron eventos</h3>
+
+      <p class="text-slate-500 mt-2">Intenta modificar los filtros de búsqueda</p>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      @for (evento of eventos(); track evento.id) {
+        <div
+          [routerLink]="['/eventos', evento.id]"
+          class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition duration-300"
+        >
+          <!-- badge -->
+          <div class="flex justify-between items-start mb-4">
+            <span
+              class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700"
+            >
+              {{ tipoLabel(evento.tipo) }}
+            </span>
+
+            <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+              {{ estadoLabel(evento.estado) }}
+            </span>
+          </div>
+
+          <h3 class="text-xl font-bold text-slate-900 mb-3">
+            {{ evento.titulo }}
+          </h3>
+
+          <p class="text-slate-600 mb-5 line-clamp-3">
+            {{ evento.descripcion }}
+          </p>
+
+          <div class="space-y-3 text-sm text-slate-600">
+            <div class="flex items-center gap-2">
+              <mat-icon>place</mat-icon>
+              {{ evento.venueNombre }}
+            </div>
+
+            <div class="flex items-center gap-2">
+              <mat-icon>schedule</mat-icon>
+              {{ evento.fechaHoraInicio | date: 'dd/MM/yyyy HH:mm' }}
+            </div>
+
+            <div class="flex items-center gap-2">
+              <mat-icon>people</mat-icon>
+              {{ evento.capacidadMaxima }} asistentes
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between mt-6 pt-4 border-t border-slate-200">
+            <span class="text-2xl font-bold text-indigo-600">
+              {{ evento.precioEntrada | currency: 'COP' : 'symbol' : '1.0-0' }}
+            </span>
+
+            <div class="flex gap-2">
+              <a
+                [routerLink]="['/eventos', evento.id]"
+                (click)="$event.stopPropagation()"
+                class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200"
+              >
+                <mat-icon>visibility</mat-icon>
+              </a>
+
+              @if (eventoActivo(evento.estado)) {
+                <a
+                  [routerLink]="['/eventos', evento.id, 'reservar']"
+                  (click)="$event.stopPropagation()"
+                  class="w-10 h-10 flex items-center justify-center rounded-xl bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                  <mat-icon>confirmation_number</mat-icon>
+                </a>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

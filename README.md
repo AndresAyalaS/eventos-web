@@ -160,16 +160,6 @@ Estado validado del proyecto:
 - 13 archivos de pruebas
 - 55 pruebas pasando
 
-### Pasos sugeridos para publicar
-
-```bash
-git init
-git add .
-git commit -m "chore: prepare project for github"
-git branch -M main
-git remote add origin <URL_DEL_REPOSITORIO>
-git push -u origin main
-```
 
 ## GitHub Actions
 
