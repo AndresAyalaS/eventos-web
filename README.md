@@ -1,59 +1,188 @@
-# Eventos
+# EventosVivos Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.3.
+Aplicación frontend para la gestión de eventos y reservas construida con Angular 22, Angular Material, Signals y formularios reactivos. El proyecto consume una API REST externa para administrar eventos, venues, reservas, confirmaciones de pago y cancelaciones.
 
-## Development server
+## Resumen
 
-To start a local development server, run:
+La aplicación permite:
 
-```bash
-ng serve
+- Crear eventos con validaciones de negocio sobre capacidad, fechas y tipo.
+- Listar eventos con filtros por título, tipo, estado, venue y rango de fechas.
+- Consultar el detalle de un evento y su reporte de ocupación.
+- Crear reservas para un evento con reglas de límite por tiempo y precio.
+- Consultar reservas, confirmar pagos y cancelar reservas con mensajes de confirmación.
+- Mostrar alertas y diálogos reutilizables para flujos críticos.
+
+## Stack
+
+- Angular 22
+- TypeScript 6
+- Angular Material 22
+- RxJS 7
+- SCSS
+- Vitest a través del builder de Angular
+
+## Funcionalidades Implementadas
+
+### Eventos
+
+- Creación de eventos con validación de título, descripción, precio, fechas y capacidad máxima.
+- Validación dinámica de capacidad según el venue seleccionado.
+- Conversión de fecha y hora a formato UTC antes de enviar al backend.
+- Listado de eventos con filtros avanzados.
+- Visualización del detalle del evento con indicadores de estado.
+- Reporte de ocupación con porcentaje, ingresos y disponibilidad.
+
+### Reservas
+
+- Creación de reservas con validación de nombre, correo y cantidad.
+- Cálculo automático del total a pagar.
+- Límite de entradas por reglas de negocio:
+  - máximo 5 entradas si faltan menos de 24 horas para el evento.
+  - máximo 10 entradas si el evento cuesta más de 100.
+  - máximo 100 entradas en el caso general.
+- Pantalla de detalle de reserva con datos del comprador, código de reserva y resumen del evento.
+- Confirmación de pago mediante diálogo de confirmación.
+- Cancelación de reserva con advertencia especial si el evento inicia en menos de 48 horas.
+- Listado de reservas desde la ruta de administración.
+
+### Experiencia de usuario
+
+- Navbar con accesos directos a eventos, creación y reservaciones.
+- Alertas de éxito, error, advertencia e información mediante Angular Material Dialog.
+- Componentes standalone en toda la aplicación.
+- Uso de Signals para el estado local de vistas, carga y procesos.
+
+## Rutas Disponibles
+
+```text
+/eventos
+/eventos/crear
+/eventos/:id
+/eventos/:id/reservar
+/reservas/:id
+/reservaciones
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Estructura del Proyecto
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+src/app/
+├── core/
+│   ├── models/
+│   └── services/
+├── features/
+│   ├── events/
+│   │   ├── event-create/
+│   │   ├── event-detail/
+│   │   └── event-list/
+│   └── reservations/
+│       ├── reservation-create/
+│       ├── reservation-detail/
+│       └── reservation-list/
+├── shared/
+│   ├── components/
+│   │   ├── app-alert-dialog/
+│   │   └── app-confirm-dialog/
+│   ├── navbar/
+│   └── utils/
+├── app.config.ts
+├── app.routes.ts
+└── app.ts
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Requisitos
+
+- Node.js 20 o superior.
+- npm 10.8.2 o superior.
+- Backend accesible por HTTPS para desarrollo local.
+
+## Instalación y Ejecución
 
 ```bash
-ng generate --help
+npm install
+npm start
 ```
 
-## Building
+La aplicación queda disponible en `http://localhost:4200`.
 
-To build the project run:
+## Scripts Útiles
 
 ```bash
-ng build
+npm start        # Desarrollo
+npm run build    # Build por defecto
+npm run build:prod
+npm test         # Tests en watch
+npm run test:ci  # Tests en una sola pasada
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Configuración de Entornos
 
-## Running unit tests
+### Desarrollo
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Archivo: `src/environments/environment.ts`
+
+```ts
+export const environment = {
+  production: false,
+  apiUrl: 'https://localhost:7248/api'
+};
+```
+
+### Producción
+
+Archivo: `src/environments/environment.prod.ts`
+
+```ts
+export const environment = {
+  production: true,
+  apiUrl: '/api'
+};
+```
+
+Importante:
+
+- En producción el frontend espera que la API esté expuesta bajo la misma raíz usando `/api`.
+- Si se publica como sitio estático en GitHub Pages, esta configuración no funcionará sin cambiar `apiUrl` a una URL pública completa del backend o sin un proxy externo.
+
+## Tests
+
+La suite actual cubre servicios, formularios, flujos de componentes y reglas de negocio principales.
+
+Ejecución recomendada para CI o validación local:
 
 ```bash
-ng test
+npm run test:ci
 ```
 
-## Running end-to-end tests
+Estado validado del proyecto:
 
-For end-to-end (e2e) testing, run:
+- 13 archivos de pruebas
+- 55 pruebas pasando
+
+### Pasos sugeridos para publicar
 
 ```bash
-ng e2e
+git init
+git add .
+git commit -m "chore: prepare project for github"
+git branch -M main
+git remote add origin <URL_DEL_REPOSITORIO>
+git push -u origin main
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## GitHub Actions
 
-## Additional Resources
+El workflow incluido ejecuta automáticamente en push y pull request:
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `npm ci`
+- `npm run build:prod`
+- `npm run test:ci`
+
+## Despliegue
+
+### Opción 1: repositorio en GitHub
+
+Ya queda lista con documentación y CI.
+
+
